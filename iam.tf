@@ -1,4 +1,4 @@
-/* IAM Role: Allow Lambda to perform Publish operations on SNS and send Logs to CloudWatch. */
+/* IAM Role: Allow Lambda to perform Publish operations on SNS, Get Secrets from Secret Manager, send Logs and PUT Metrics to CloudWatch . */
 
 data "aws_iam_policy_document" "policy_source" {
   statement {
@@ -40,6 +40,17 @@ data "aws_iam_policy_document" "policy_source" {
       "ec2:DescribeSubnets"
     ]
     resources = ["*"]
+  }
+
+  statement {
+    sid    = "GetBOTSecrets"
+    effect = "Allow"
+    actions = [
+      "secretsmanager:GetSecretValue"
+    ]
+    resources = [
+      "${aws_secretsmanager_secret.telegram_bot_credentials.arn}"
+    ]
   }
 }
 

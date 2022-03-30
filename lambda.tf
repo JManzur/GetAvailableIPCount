@@ -1,10 +1,8 @@
-/* Lambda Function with SNS Notification */
-
 # Zip the lambda code
 data "archive_file" "init" {
   type        = "zip"
   source_dir  = "lambda_code/"
-  output_path = "output_lambda_zip/GetAvailableIPCount.zip"
+  output_path = "output_lambda_zip/lambda_sns_notification.zip"
 }
 
 # Create lambda function

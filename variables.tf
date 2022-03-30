@@ -8,7 +8,7 @@ variable "aws_region" {
 variable "target" {
   type = map(string)
   default = {
-    target01 = "example@gmail.com"
+    target01 = "jmanzurst@gmail.com"
   }
 }
 
@@ -26,4 +26,16 @@ variable "project-tags" {
 variable "resource-name-tag" {
   type    = string
   default = "AvailableIPCount"
+}
+
+# Loading TOKEN from .env file ---> Before applying this manifest, run: "source .env"
+variable "TOKEN" {
+  type        = string
+  description = "Telegram BOT Token"
+}
+
+# Loading USER_ID from .env file ---> Before applying this manifest, run: "source .env"
+variable "USER_ID" {
+  type        = string
+  description = "Telegram BOT User ID"
 }

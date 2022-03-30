@@ -3,7 +3,7 @@ resource "aws_cloudwatch_event_rule" "get-ip-count" {
   name                = "get-ip-count"
   description         = "Get available IP count every 5 minutes"
   schedule_expression = "cron(0/5 * ? * * *)"
-  is_enabled          = true
+  is_enabled          = false
 }
 
 resource "aws_cloudwatch_event_target" "lambda_getip_target" {
