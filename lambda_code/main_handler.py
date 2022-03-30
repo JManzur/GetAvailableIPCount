@@ -26,34 +26,34 @@ def lambda_handler(event, context):
         if not subnets:
             logger.info("Subnet List is empty")
         elif subnets:
-            available_ip_count = resp['Subnets'][0]['AvailableIpAddressCount']
-            logger.info("Available IP Address Count = {}".format(available_ip_count))
-            
-            for subnet in subnets:
-                cloudwatch.put_metric_data(
-                    Namespace='Subnets',
-                    MetricData=[
-                        {
-                            'MetricName': 'AvailableIPCount',
-                            'Value': subnet['AvailableIpAddressCount'],
-                            'Dimensions': [
-                                {
-                                    'Name': 'SubnetId',
-                                    'Value': subnet['SubnetId'],
-                                },
-                                {
-                                    'Name': 'VpcId',
-                                    'Value': subnet['VpcId'],
-                                }
-                            ]
-                        }
-                    ]
-                )
-    
-            logger.info("Put Metri Data - OK")
-            
-            if available_ip_count < threshold:
+            for i in range(len(subnets)): 
+                available_ip_count = resp['Subnets'][i]['AvailableIpAddressCount']
+                logger.info("Available IP Address Count = {}".format(available_ip_count))
+                
                 for subnet in subnets:
+                    cloudwatch.put_metric_data(
+                        Namespace='Subnets',
+                        MetricData=[
+                            {
+                                'MetricName': 'AvailableIPCount',
+                                'Value': subnet['AvailableIpAddressCount'],
+                                'Dimensions': [
+                                    {
+                                        'Name': 'SubnetId',
+                                        'Value': subnet['SubnetId'],
+                                    },
+                                    {
+                                        'Name': 'VpcId',
+                                        'Value': subnet['VpcId'],
+                                    }
+                                ]
+                            }
+                        ]
+                    )
+        
+                logger.info("Put Metri Data - OK")
+
+                if available_ip_count < threshold:
                     logger.warning("Only {} IPs left in {} {}".format(available_ip_count, subnet['SubnetId'], subnet['VpcId']))
                     message = ("WARNING: Only {} IPs left in {} {}".format(available_ip_count, subnet['SubnetId'], subnet['VpcId']))
                     subnet_id = subnet['SubnetId']
@@ -103,7 +103,7 @@ def send_email(context, message, threshold, subnet_id):
             'CloudWatch log stream name: {} \n'.format(context.log_stream_name) +
             'CloudWatch log group name: {} \n'.format(context.log_group_name)
             )
-            
+
         logger.info("SNS message sent successfully")
     except Exception as error:
         logger.error(error)
