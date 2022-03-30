@@ -91,17 +91,22 @@ def lambda_handler(event, context):
 			}
 			
 def send_email(context, message, threshold, subnet_id):
-    sns_client.publish(
-        TopicArn = SNS_Topic_ARN,
-        Subject = 'WARNING: {} IP Count under {}'.format(subnet_id, threshold),
-        Message = 
-        'Warning Message: {} \n'.format(message) +
-        '\n' +
-        'More Info: \n' +
-        'Lambda Request ID: {} \n'.format(context.aws_request_id) +
-        'CloudWatch log stream name: {} \n'.format(context.log_stream_name) +
-        'CloudWatch log group name: {} \n'.format(context.log_group_name)
-        )
+    try:
+        sns_client.publish(
+            TopicArn = SNS_Topic_ARN,
+            Subject = 'WARNING: {} IP Count under {}'.format(subnet_id, threshold),
+            Message = 
+            'Warning Message: {} \n'.format(message) +
+            '\n' +
+            'More Info: \n' +
+            'Lambda Request ID: {} \n'.format(context.aws_request_id) +
+            'CloudWatch log stream name: {} \n'.format(context.log_stream_name) +
+            'CloudWatch log group name: {} \n'.format(context.log_group_name)
+            )
+            
+        logger.info("SNS message sent successfully")
+    except Exception as error:
+        logger.error(error)
 
 def send_telegram(message):
     #Retrieve and load the Telegram BOT Credentials from Secret Manager
@@ -119,6 +124,8 @@ def send_telegram(message):
             "chat_id": telegram_cred['user_id']
         }
         http_response = json.loads(http.request("POST", TELEGRAM_URL, fields=payload).data.decode('utf-8'))
+
+        logger.info("Telegram message sent successfully")
         return http_response
-    except Exception as e:
-        raise e
+    except Exception as error:
+        logger.error(error)
