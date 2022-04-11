@@ -39,3 +39,10 @@ variable "USER_ID" {
   type        = string
   description = "Telegram BOT User ID"
 }
+
+# Available IP Count threshold (used in lambda to trigger notification)
+variable "threshold" {
+  type        = number
+  description = "Available IP Count threshold"
+  default     = 20
+}

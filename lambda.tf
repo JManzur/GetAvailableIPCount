@@ -22,7 +22,8 @@ resource "aws_lambda_function" "GetAvailableIPCount" {
 
   environment {
     variables = {
-      SNS_Topic_ARN = aws_sns_topic.Error_Notification.arn
+      SNS_Topic_ARN = aws_sns_topic.Error_Notification.arn,
+      threshold     = var.threshold
     }
   }
 

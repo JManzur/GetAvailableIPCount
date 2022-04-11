@@ -2,11 +2,9 @@ import boto3
 import logging, os, urllib3, json
 from get_secret import get_telegram_secret
 
-#Warning threshold
-threshold = 20
-
-#Import Environment Variables:
+#Get Environment Variables:
 SNS_Topic_ARN = os.environ.get('SNS_Topic_ARN')
+threshold = os.environ.get('threshold')
 
 #Instantiate Boto3 Clients:
 sns_client = boto3.client('sns')
@@ -53,7 +51,7 @@ def lambda_handler(event, context):
         
                 logger.info("Put Metri Data - OK")
 
-                if available_ip_count < threshold:
+                if available_ip_count < int(threshold):
                     logger.warning("Only {} IPs left in {} {}".format(available_ip_count, subnet['SubnetId'], subnet['VpcId']))
                     message = ("WARNING: Only {} IPs left in {} {}".format(available_ip_count, subnet['SubnetId'], subnet['VpcId']))
                     subnet_id = subnet['SubnetId']
